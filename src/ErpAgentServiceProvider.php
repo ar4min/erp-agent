@@ -49,6 +49,17 @@ class ErpAgentServiceProvider extends ServiceProvider
             __DIR__ . '/../config/erp-agent.php' => config_path('erp-agent.php'),
         ], 'erp-agent-config');
 
+        // Publish views
+        $this->publishes([
+            __DIR__ . '/../resources/views' => resource_path('views/vendor/erp-agent'),
+        ], 'erp-agent-views');
+
+        // Load views
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'erp-agent');
+
+        // Load routes
+        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+
         // Register commands
         if ($this->app->runningInConsole()) {
             $this->commands([

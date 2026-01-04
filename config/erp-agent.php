@@ -60,4 +60,15 @@ return [
             'license-expired',
         ],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Support Contact Information
+    |--------------------------------------------------------------------------
+    */
+    'support' => [
+        'phone' => env('SUPPORT_PHONE', '021-12345678'),
+        'email' => env('SUPPORT_EMAIL', 'support@example.com'),
+        'url' => env('SUPPORT_URL', '/support'),
+    ],
 ];
