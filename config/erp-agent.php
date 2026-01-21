@@ -71,4 +71,35 @@ return [
         'email' => env('SUPPORT_EMAIL', 'support@example.com'),
         'url' => env('SUPPORT_URL', '/support'),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Microsoft Clarity Analytics
+    |--------------------------------------------------------------------------
+    | Clarity provides heatmaps, session recordings, and user behavior analytics.
+    | Get your project ID from: https://clarity.microsoft.com
+    */
+    'clarity' => [
+        'enabled' => env('CLARITY_ENABLED', true),
+        'project_id' => env('CLARITY_PROJECT_ID', ''),
+
+        // Auto-inject script into all HTML responses
+        'auto_inject' => env('CLARITY_AUTO_INJECT', true),
+
+        // Track tenant/instance info for filtering in Clarity dashboard
+        'track_tenant' => env('CLARITY_TRACK_TENANT', true),
+
+        // Exclude these routes from tracking
+        'exclude_routes' => [
+            'login',
+            'logout',
+            'password/*',
+            'license-expired',
+        ],
+
+        // Exclude these IPs (e.g., developers, admins)
+        'exclude_ips' => [
+            // '127.0.0.1',
+        ],
+    ],
 ];

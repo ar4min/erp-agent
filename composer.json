@@ -1,6 +1,7 @@
 {
     "name": "ar4min/erp-agent",
     "description": "ERP Agent for Control Plane communication - Heartbeat, License validation, and more",
+    "version": "1.2.0",
     "type": "library",
     "license": "MIT",
     "authors": [

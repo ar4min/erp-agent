@@ -208,6 +208,52 @@ When Control Plane is unreachable:
 2. Grace period starts (default: 72 hours)
 3. After grace period expires, license becomes invalid
 
+## Microsoft Clarity Analytics
+
+Built-in support for Microsoft Clarity user behavior analytics (heatmaps, session recordings).
+
+### Setup
+
+1. Get your Project ID from [clarity.microsoft.com](https://clarity.microsoft.com)
+2. Add to `.env`:
+
+```env
+CLARITY_ENABLED=true
+CLARITY_PROJECT_ID=your-project-id
+```
+
+That's it! The script is automatically injected into all HTML responses.
+
+### Features
+
+- **Auto-injection**: No code changes needed in your views
+- **Tenant tracking**: Automatically tracks `instance_id` and `tenant_name` for filtering
+- **User tracking**: Tracks logged-in user ID (hashed email for privacy)
+- **Route exclusion**: Login/logout pages are excluded by default
+- **IP exclusion**: Exclude developer IPs from tracking
+
+### Configuration
+
+```php
+// config/erp-agent.php
+'clarity' => [
+    'enabled' => env('CLARITY_ENABLED', true),
+    'project_id' => env('CLARITY_PROJECT_ID', ''),
+    'auto_inject' => true,  // Inject script automatically
+    'track_tenant' => true, // Track tenant/instance info
+    'exclude_routes' => ['login', 'logout', 'password/*'],
+    'exclude_ips' => ['127.0.0.1'],  // Developer IPs
+],
+```
+
+### Filtering in Clarity Dashboard
+
+In Clarity, you can filter sessions by:
+- `instance_id` - Specific ERP instance
+- `tenant_name` - Tenant/company name
+- `user_id` - Specific user
+- `user_hash` - Hashed user email
+
 ## License
 
 MIT

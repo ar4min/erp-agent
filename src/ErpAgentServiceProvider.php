@@ -2,6 +2,7 @@
 
 namespace Ar4min\ErpAgent;
 
+use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
 use Ar4min\ErpAgent\Services\ControlPlaneClient;
 use Ar4min\ErpAgent\Services\HeartbeatService;
@@ -10,6 +11,7 @@ use Ar4min\ErpAgent\Commands\InstallCommand;
 use Ar4min\ErpAgent\Commands\HeartbeatCommand;
 use Ar4min\ErpAgent\Commands\LicenseCommand;
 use Ar4min\ErpAgent\Commands\TestConnectionCommand;
+use Ar4min\ErpAgent\Middleware\InjectClarity;
 
 class ErpAgentServiceProvider extends ServiceProvider
 {
@@ -73,5 +75,12 @@ class ErpAgentServiceProvider extends ServiceProvider
         // Register middleware alias
         $router = $this->app->make('router');
         $router->aliasMiddleware('erp.license', \Ar4min\ErpAgent\Middleware\VerifyLicense::class);
+        $router->aliasMiddleware('erp.clarity', InjectClarity::class);
+
+        // Auto-register Clarity middleware globally if enabled
+        if (config('erp-agent.clarity.enabled') && config('erp-agent.clarity.auto_inject')) {
+            $kernel = $this->app->make(Kernel::class);
+            $kernel->pushMiddleware(InjectClarity::class);
+        }
     }
 }
