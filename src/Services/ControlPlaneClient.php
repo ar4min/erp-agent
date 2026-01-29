@@ -41,8 +41,8 @@ class ControlPlaneClient
     public function sendHeartbeat(array $metrics): array
     {
         try {
-            $payload = array_merge(['instance_id' => $this->instanceId], $metrics);
-            $response = $this->request()->post('/api/agent/heartbeat', $payload);
+            // Don't include instance_id in payload - it's sent via X-Instance-ID header
+            $response = $this->request()->post('/api/agent/heartbeat', $metrics);
 
             if ($response->successful()) {
                 Log::debug('[ERP Agent] Heartbeat sent successfully');
