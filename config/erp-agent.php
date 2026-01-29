@@ -63,6 +63,25 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Log Forwarding Configuration
+    |--------------------------------------------------------------------------
+    | Forward application logs to the Control Plane for centralized monitoring.
+    | Logs are queued locally and sent in batches.
+    |
+    | To use as a Laravel log channel, add to config/logging.php channels:
+    |   'control_plane' => [
+    |       'driver' => 'custom',
+    |       'via' => \Ar4min\ErpAgent\Logging\ControlPlaneLogger::class,
+    |       'level' => 'info',
+    |   ],
+    */
+    'logging' => [
+        'forwarding_enabled' => env('ERP_LOG_FORWARDING', true),
+        'forward_interval' => env('ERP_LOG_FORWARD_INTERVAL', 300), // seconds
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Support Contact Information
     |--------------------------------------------------------------------------
     */

@@ -7,10 +7,12 @@ use Illuminate\Support\ServiceProvider;
 use Ar4min\ErpAgent\Services\ControlPlaneClient;
 use Ar4min\ErpAgent\Services\HeartbeatService;
 use Ar4min\ErpAgent\Services\LicenseService;
+use Ar4min\ErpAgent\Services\LogForwarder;
 use Ar4min\ErpAgent\Commands\InstallCommand;
 use Ar4min\ErpAgent\Commands\HeartbeatCommand;
 use Ar4min\ErpAgent\Commands\LicenseCommand;
 use Ar4min\ErpAgent\Commands\TestConnectionCommand;
+use Ar4min\ErpAgent\Commands\ForwardLogsCommand;
 use Ar4min\ErpAgent\Middleware\InjectClarity;
 
 class ErpAgentServiceProvider extends ServiceProvider
@@ -36,9 +38,14 @@ class ErpAgentServiceProvider extends ServiceProvider
             return new LicenseService($app->make(ControlPlaneClient::class));
         });
 
+        $this->app->singleton(LogForwarder::class, function ($app) {
+            return new LogForwarder($app->make(ControlPlaneClient::class));
+        });
+
         // Register facade aliases
         $this->app->alias(LicenseService::class, 'erp-license');
         $this->app->alias(HeartbeatService::class, 'erp-heartbeat');
+        $this->app->alias(LogForwarder::class, 'erp-log-forwarder');
     }
 
     /**
@@ -69,6 +76,7 @@ class ErpAgentServiceProvider extends ServiceProvider
                 HeartbeatCommand::class,
                 LicenseCommand::class,
                 TestConnectionCommand::class,
+                ForwardLogsCommand::class,
             ]);
         }
 

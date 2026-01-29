@@ -128,8 +128,7 @@ class ControlPlaneClient
     public function forwardLogs(array $logs): bool
     {
         try {
-            $response = $this->request()->post('/api/logs/ingest', [
-                'instance_id' => $this->instanceId,
+            $response = $this->request()->post('/api/agent/logs', [
                 'logs' => $logs,
             ]);
             return $response->successful();
