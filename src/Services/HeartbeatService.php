@@ -32,18 +32,19 @@ class HeartbeatService
     public function collectMetrics(): array
     {
         return [
-            'status' => 'up',
             'version' => config('app.version', '1.0.0'),
             'uptime' => $this->getUptime(),
-            'active_users' => $this->getActiveUsers(),
-            'queue_size' => $this->getQueueSize(),
-            'failed_jobs' => $this->getFailedJobs(),
-            'disk_usage_percent' => $this->getDiskUsage(),
-            'memory_usage_mb' => $this->getMemoryUsage(),
-            'cpu_load' => $this->getCpuLoad(),
-            'avg_response_time_ms' => $this->getAverageResponseTime(),
             'license_status' => $this->getLicenseStatus(),
-            'license_days_remaining' => $this->getLicenseDaysRemaining(),
+            'license_expires_in_days' => $this->getLicenseDaysRemaining(),
+            'metrics' => [
+                'active_users' => $this->getActiveUsers(),
+                'queue_pending' => $this->getQueueSize(),
+                'failed_jobs' => $this->getFailedJobs(),
+                'disk_usage_percent' => $this->getDiskUsage(),
+                'memory_usage_mb' => $this->getMemoryUsage(),
+                'cpu_load' => $this->getCpuLoad(),
+                'avg_response_time_ms' => $this->getAverageResponseTime(),
+            ],
         ];
     }
 
