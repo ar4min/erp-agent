@@ -68,7 +68,8 @@ class TestConnectionCommand extends Command
         if ($licenseResult['valid'] ?? false) {
             $this->line('  <fg=green>✓</> License is valid');
             if (!empty($licenseResult['modules'])) {
-                $this->line('    Modules: ' . implode(', ', $licenseResult['modules']));
+                $moduleNames = array_map(fn($m) => is_array($m) ? ($m['name'] ?? $m['code'] ?? '') : $m, $licenseResult['modules']);
+                $this->line('    Modules: ' . implode(', ', $moduleNames));
             }
             if ($licenseResult['grace_period'] ?? false) {
                 $hours = round(($licenseResult['grace_remaining'] ?? 0) / 3600, 1);
