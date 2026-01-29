@@ -49,7 +49,8 @@ class LicenseCommand extends Command
                 $this->newLine();
                 $this->info('Enabled modules:');
                 foreach ($result['modules'] as $module) {
-                    $this->line("  • {$module}");
+                    $name = is_array($module) ? ($module['name'] ?? $module['code'] ?? 'Unknown') : $module;
+                    $this->line("  • {$name}");
                 }
             }
 
@@ -78,16 +79,23 @@ class LicenseCommand extends Command
         $this->info('└─────────────────────────────────────────┘');
         $this->newLine();
 
+        $modules = 'None';
+        if (!empty($status['modules'])) {
+            $moduleNames = array_map(fn($m) => is_array($m) ? ($m['name'] ?? $m['code'] ?? '') : $m, $status['modules']);
+            $modules = implode(', ', $moduleNames);
+        }
+
         $this->table([], [
             ['Status', $status['valid'] ? '<fg=green>✓ Valid</>' : '<fg=red>✗ Invalid</>'],
             ['Tenant', $status['tenant_name'] ?? 'N/A'],
             ['Plan', $status['plan_name'] ?? 'N/A'],
-            ['Modules', implode(', ', $status['modules']) ?: 'None'],
+            ['Modules', $modules],
             ['Expires At', $status['expires_at'] ?? 'N/A'],
             ['Days Remaining', $status['days_until_expiration'] ?? 'N/A'],
             ['Grace Period', $status['in_grace_period'] ? 'Yes' : 'No'],
             ['Grace Remaining', $status['grace_remaining'] ? round($status['grace_remaining'] / 3600, 1) . ' hours' : 'N/A'],
             ['Last Validated', $status['last_validated'] ?? 'Never'],
+            ['Error', $status['error'] ?? 'N/A'],
         ]);
 
         return self::SUCCESS;

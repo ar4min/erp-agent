@@ -85,9 +85,14 @@ class ErpAgentServiceProvider extends ServiceProvider
         $router->aliasMiddleware('erp.license', \Ar4min\ErpAgent\Middleware\VerifyLicense::class);
         $router->aliasMiddleware('erp.clarity', InjectClarity::class);
 
+        $kernel = $this->app->make(Kernel::class);
+
+        // Auto-register License middleware globally (ENFORCED - cannot be disabled)
+        // This ensures license validation on ALL routes except login/logout
+        $kernel->pushMiddleware(\Ar4min\ErpAgent\Middleware\VerifyLicense::class);
+
         // Auto-register Clarity middleware globally if enabled
         if (config('erp-agent.clarity.enabled') && config('erp-agent.clarity.auto_inject')) {
-            $kernel = $this->app->make(Kernel::class);
             $kernel->pushMiddleware(InjectClarity::class);
         }
     }
