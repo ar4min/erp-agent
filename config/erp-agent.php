@@ -63,6 +63,30 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Request Tracing (Telescope-like)
+    |--------------------------------------------------------------------------
+    | Collects per-request data (queries, models, cache, performance) and
+    | sends to Control Plane for centralized monitoring via Kibana.
+    */
+    'tracing' => [
+        'enabled' => env('ERP_TRACING_ENABLED', true),
+        'batch_size' => env('ERP_TRACING_BATCH_SIZE', 50),
+        'max_queue_size' => env('ERP_TRACING_MAX_QUEUE', 2000),
+        'flush_interval' => env('ERP_TRACING_FLUSH_INTERVAL', 60), // seconds
+
+        // Paths to exclude from tracing
+        'exclude_paths' => [
+            '_debugbar/*',
+            'telescope/*',
+            'horizon/*',
+            'livewire/*',
+            'sanctum/*',
+            'license-expired',
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Log Forwarding Configuration
     |--------------------------------------------------------------------------
     | Forward application logs to the Control Plane for centralized monitoring.

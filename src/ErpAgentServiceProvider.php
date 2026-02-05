@@ -8,11 +8,13 @@ use Ar4min\ErpAgent\Services\ControlPlaneClient;
 use Ar4min\ErpAgent\Services\HeartbeatService;
 use Ar4min\ErpAgent\Services\LicenseService;
 use Ar4min\ErpAgent\Services\LogForwarder;
+use Ar4min\ErpAgent\Services\RequestTracerService;
 use Ar4min\ErpAgent\Commands\InstallCommand;
 use Ar4min\ErpAgent\Commands\HeartbeatCommand;
 use Ar4min\ErpAgent\Commands\LicenseCommand;
 use Ar4min\ErpAgent\Commands\TestConnectionCommand;
 use Ar4min\ErpAgent\Commands\ForwardLogsCommand;
+use Ar4min\ErpAgent\Commands\FlushTracesCommand;
 use Ar4min\ErpAgent\Middleware\InjectClarity;
 
 class ErpAgentServiceProvider extends ServiceProvider
@@ -40,6 +42,10 @@ class ErpAgentServiceProvider extends ServiceProvider
 
         $this->app->singleton(LogForwarder::class, function ($app) {
             return new LogForwarder($app->make(ControlPlaneClient::class));
+        });
+
+        $this->app->singleton(RequestTracerService::class, function ($app) {
+            return new RequestTracerService($app->make(ControlPlaneClient::class));
         });
 
         // Register facade aliases
@@ -77,6 +83,7 @@ class ErpAgentServiceProvider extends ServiceProvider
                 LicenseCommand::class,
                 TestConnectionCommand::class,
                 ForwardLogsCommand::class,
+                FlushTracesCommand::class,
             ]);
         }
 
@@ -84,12 +91,18 @@ class ErpAgentServiceProvider extends ServiceProvider
         $router = $this->app->make('router');
         $router->aliasMiddleware('erp.license', \Ar4min\ErpAgent\Middleware\VerifyLicense::class);
         $router->aliasMiddleware('erp.clarity', InjectClarity::class);
+        $router->aliasMiddleware('erp.tracer', \Ar4min\ErpAgent\Middleware\RequestTracer::class);
 
         $kernel = $this->app->make(Kernel::class);
 
         // Auto-register License middleware globally (ENFORCED - cannot be disabled)
         // This ensures license validation on ALL routes except login/logout
         $kernel->pushMiddleware(\Ar4min\ErpAgent\Middleware\VerifyLicense::class);
+
+        // Auto-register Request Tracer middleware globally if enabled
+        if (config('erp-agent.tracing.enabled', true)) {
+            $kernel->pushMiddleware(\Ar4min\ErpAgent\Middleware\RequestTracer::class);
+        }
 
         // Auto-register Clarity middleware globally if enabled
         if (config('erp-agent.clarity.enabled') && config('erp-agent.clarity.auto_inject')) {

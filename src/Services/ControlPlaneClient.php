@@ -139,6 +139,22 @@ class ControlPlaneClient
     }
 
     /**
+     * Forward request traces to Control Plane
+     */
+    public function forwardTraces(array $traces): bool
+    {
+        try {
+            $response = $this->request()->post('/api/agent/traces', [
+                'traces' => $traces,
+            ]);
+            return $response->successful();
+        } catch (\Exception $e) {
+            Log::error('[ERP Agent] Trace forwarding exception', ['error' => $e->getMessage()]);
+            return false;
+        }
+    }
+
+    /**
      * Test connection to Control Plane
      */
     public function testConnection(): bool
